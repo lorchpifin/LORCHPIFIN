@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>داشبورد مالی | واحد مالی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jalaali-js@1.2.7/dist/jalaali.min.js"></script>
+<style>
+:root {
+  --primary: #1e40af;
+  --primary-light: #3b82f6;
+  --accent: #0d9488;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Vazir, Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.login-wrap {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+}
+.login-box {
+  background: white; padding: 2.5rem; border-radius: 16px;
+  width: 100%; max-width: 420px; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+.login-box h1 { text-align: center; margin-bottom: 0.5rem; color: var(--primary); font-size: 1.6rem; }
+.login-box p { text-align: center; color: var(--muted); margin-bottom: 1.5rem; font-size: 0.9rem; }
+.login-box input {
+  width: 100%; padding: 0.85rem 1rem; margin-bottom: 1rem;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: 1rem;
+}
+.login-box button {
+  background: var(--primary); color: white; border: none; padding: 0.85rem;
+  border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 1rem; width: 100%;
+  transition: background 0.2s;
+}
+.login-box button:hover { background: #1d4ed8; }
+.demo-info { margin-top: 1.25rem; font-size: 0.8rem; color: var(--muted); text-align: center; line-height: 1.7; background: #f1f5f9; padding: 0.75rem; border-radius: 8px; }
+
+.app { display: none; }
+.sidebar {
+  position: fixed; right: 0; top: 0; height: 100vh; width: 260px;
+  background: white; border-left: 1px solid var(--border);
+  padding: 1.5rem 1rem; overflow-y: auto; box-shadow: -2px 0 10px rgb(0 0 0 / 0.03);
+}
+.sidebar .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; }
+.nav-item {
+  padding: 0.8rem 1rem; border-radius: 10px; cursor: pointer; margin-bottom: 0.35rem;
+  transition: all 0.2s; color: var(--muted); font-weight: 500;
+}
+.nav-item:hover { background: #f1f5f9; color: var(--text); }
+.nav-item.active { background: var(--primary); color: white; }
+.main { margin-right: 260px; padding: 1.75rem 2rem; }
+.header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1.75rem;
+}
+.header h1 { font-size: 1.5rem; font-weight: 700; }
+.user-info { display: flex; align-items: center; gap: 0.75rem; }
+.user-badge { background: #e0e7ff; color: var(--primary); padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500; }
+.logout { background: #fee2e2; color: var(--danger); border: none; padding: 0.45rem 1rem; border-radius: 8px; cursor: pointer; font-family: inherit; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem; }
+.card {
+  background: var(--card); border-radius: 14px; padding: 1.35rem;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.card h3 { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; font-weight: 500; }
+.card .value { font-size: 1.85rem; font-weight: 700; }
+.card .value.green { color: var(--success); }
+.card .value.orange { color: var(--warning); }
+.card .value.blue { color: var(--primary); }
+
+.section { display: none; }
+.section.active { display: block; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.92rem; }
+th, td { padding: 0.75rem 0.6rem; text-align: right; border-bottom: 1px solid var(--border); }
+th { background: #f8fafc; color: var(--muted); font-weight: 600; }
+tr:hover { background: #f8fafc; }
+
+.badge { padding: 0.28rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+.badge.pending { background: #fef3c7; color: #92400e; }
+.badge.done { background: #d1fae5; color: #065f46; }
+.badge.overdue { background: #fee2e2; color: #991b1b; }
+.badge.daily { background: #dbeafe; color: #1e40af; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.4rem; color: var(--muted); font-size: 0.85rem; font-weight: 500; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: 0.95rem;
+}
+.btn {
+  background: var(--primary); color: white; border: none; padding: 0.65rem 1.25rem;
+  border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.95rem;
+  transition: 0.2s;
+}
+.btn:hover { background: #1d4ed8; }
+.btn-sm { padding: 0.4rem 0.75rem; font-size: 0.82rem; }
+.btn-green { background: var(--success); }
+.btn-green:hover { background: #047857; }
+.btn-danger { background: var(--danger); }
+.btn-danger:hover { background: #b91c1c; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+.print-area {
+  background: white; color: black; padding: 2.5rem; border-radius: 12px; margin-top: 1.5rem;
+  display: none; border: 1px solid #ddd;
+}
+.print-area h2 { text-align: center; margin-bottom: 1.5rem; color: #1e40af; }
+.print-area table { border: 1px solid #ccc; }
+.print-area th, .print-area td { border: 1px solid #ccc; padding: 0.6rem; }
+
+.status-bar {
+  background: #ecfdf5; color: #065f46; padding: 0.6rem 1rem; border-radius: 8px;
+  margin-bottom: 1rem; font-size: 0.85rem; display: none;
+}
+.status-bar.error { background: #fef2f2; color: #991b1b; }
+
+.folder-btn { margin-bottom: 1rem; }
+.upload-area {
+  border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center;
+  margin: 1rem 0; background: #f8fafc; cursor: pointer; transition: 0.2s;
+}
+.upload-area:hover { border-color: var(--primary); background: #eff6ff; }
+.upload-area input { display: none; }
+
+@media print {
+  .sidebar, .header, .btn, .no-print { display: none !important; }
+  .main { margin: 0; padding: 0; }
+  .print-area { display: block !important; border: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginScreen">
+  <div class="login-box">
+    <h1>داشبورد مالی</h1>
+    <p>واحد مالی • نسخه ارائه به مدیران</p>
+    <input type="text" id="loginUser" placeholder="نام کاربری" value="admin">
+    <input type="password" id="loginPass" placeholder="رمز عبور" value="admin123">
+    <button onclick="doLogin()">ورود به داشبورد</button>
+    <div class="demo-info">
+      کاربران نمونه:<br>
+      <b>admin</b> / admin123 (ادمین)<br>
+      <b>finance</b> / finance123 (تیم مالی)<br>
+      <b>viewer</b> / viewer123 (فقط مشاهده)
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="sidebar">
+    <div class="logo">📊 داشبورد مالی</div>
+    <div class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">داشبورد کلی</div>
+    <div class="nav-item" data-section="tasks" onclick="showSection('tasks')">وظایف و سررسیدها</div>
+    <div class="nav-item" data-section="banks" onclick="showSection('banks')">موجودی بانک‌ها</div>
+    <div class="nav-item" data-section="petty" onclick="showSection('petty')">تنخواه‌داران</div>
+    <div class="nav-item" data-section="guarantees" onclick="showSection('guarantees')">ضمانت‌ها</div>
+    <div class="nav-item" data-section="forecast" onclick="showSection('forecast')">پیش‌بینی پرداخت</div>
+    <div class="nav-item" data-section="treasury" onclick="showSection('treasury')">خزانه و پرداخت‌ها</div>
+    <div class="nav-item" data-section="cover" onclick="showSection('cover')">روکش درخواست پرداخت</div>
+    <div class="nav-item" data-section="users" id="navUsers" onclick="showSection('users')" style="display:none;">مدیریت کاربران</div>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h1 id="pageTitle">داشبورد کلی</h1>
+      <div class="user-info">
+        <span class="user-badge" id="userBadge">کاربر</span>
+        <button class="logout" onclick="logout()">خروج</button>
+      </div>
+    </div>
+
+    <div class="status-bar" id="statusBar"></div>
+
+    <div class="section active" id="sec-dashboard">
+      <button class="btn btn-outline folder-btn no-print" onclick="selectFolder()">📁 انتخاب پوشه داده (پوشه شیر)</button>
+      <div class="grid">
+        <div class="card"><h3>وظایف باز</h3><div class="value orange" id="kpiOpen">0</div></div>
+        <div class="card"><h3>سررسید نزدیک (۷ روز)</h3><div class="value blue" id="kpiSoon">0</div></div>
+        <div class="card"><h3>مجموع موجودی بانک‌ها</h3><div class="value green" id="kpiBankTotal">۰</div></div>
+        <div class="card"><h3>تعداد پرداخت‌ها</h3><div class="value" id="kpiPayments">0</div></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-tasks">
+      <div class="card no-print" id="taskFormCard">
+        <h3>ثبت وظیفه جدید</h3>
+        <div class="form-row">
+          <div class="form-group"><label>عنوان وظیفه</label><input id="taskTitle" placeholder="مثلاً بروزرسانی موجودی بانک"></div>
+          <div class="form-group"><label>نوع</label>
+            <select id="taskType">
+              <option>روزانه</option>
+              <option>اظهارنامه</option>
+              <option>دفاتر قانونی</option>
+              <option>گزارش مالیاتی</option>
+              <option>سایر</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>سررسید (برای وظایف غیرروزانه)</label><input type="date" id="taskDue"></div>
+          <div class="form-group"><label>اولویت</label>
+            <select id="taskPriority"><option>عادی</option><option>مهم</option><option>فوری</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>مسئول</label><input id="taskAssignee" placeholder="نام مسئول"></div>
+        <label style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem;">
+          <input type="checkbox" id="taskIsDaily"> وظیفه روزانه (هر روز تکرار شود)
+        </label>
+        <button class="btn" onclick="addTask()">ثبت وظیفه</button>
+      </div>
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>لیست وظایف و سررسیدها</h3>
+        <table id="taskTable">
+          <thead><tr><th>عنوان</th><th>نوع</th><th>سررسید</th><th>مسئول</th><th>وضعیت</th><th class="no-print">مدرک</th><th class="no-print">عملیات</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section" id="sec-banks">
+      <div class="card no-print" id="bankUploadCard">
+        <h3>بروزرسانی موجودی از فایل PDF بانک</h3>
+        <p style="color:var(--muted); margin-bottom:1rem; font-size:0.9rem;">فایل PDF «مشاهده حساب‌ها» را آپلود کنید تا موجودی‌ها به‌صورت خودکار استخراج و به‌روز شوند.</p>
+        <div class="upload-area" onclick="document.getElementById('pdfUpload').click()">
+          <div>📄 کلیک کنید یا فایل PDF را اینجا بکشید</div>
+          <div style="font-size:0.85rem; color:var(--muted); margin-top:0.5rem;">فقط فایل‌های PDF بانک</div>
+          <input type="file" id="pdfUpload" accept=".pdf" onchange="handlePdfUpload(this)">
+        </div>
+        <div id="parseResult" style="margin-top:1rem;"></div>
+      </div>
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>موجودی حساب‌های بانکی</h3>
+        <table id="bankTable">
+          <thead><tr><th>شماره حساب</th><th>نام / توضیح</th><th>مانده واقعی</th><th>مانده قابل برداشت</th><th>آخرین بروزرسانی</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top:1rem; font-weight:700; font-size:1.1rem;">
+          مجموع موجودی واقعی: <span id="bankSum" class="value green">۰</span> ریال
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-petty">
+      <div class="card no-print" id="pettyFormCard">
+        <h3>ثبت تنخواه‌دار جدید</h3>
+        <div class="form-row">
+          <div class="form-group"><label>نام تنخواه‌دار</label><input id="ptName" placeholder="نام و نام خانوادگی"></div>
+          <div class="form-group"><label>واحد / بخش</label><input id="ptUnit" placeholder="مثلاً منابع انسانی، سایت"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>مبلغ تنخواه اختصاصی (ریال)</label><input type="number" id="ptAllocated"></div>
+          <div class="form-group"><label>مانده فعلی (ریال)</label><input type="number" id="ptBalance"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>تاریخ آخرین تسویه</label><input type="date" id="ptLastSettle"></div>
+          <div class="form-group"><label>وضعیت</label>
+            <select id="ptStatus">
+              <option value="active">فعال</option>
+              <option value="settled">تسویه شده</option>
+              <option value="suspended">معلق</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>توضیحات</label><input id="ptNote" placeholder="توضیحات اختیاری"></div>
+        <button class="btn" onclick="addPetty()">ثبت تنخواه‌دار</button>
+      </div>
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>لیست تنخواه‌داران</h3>
+        <table id="pettyTable">
+          <thead>
+            <tr>
+              <th>نام</th>
+              <th>واحد</th>
+              <th>مبلغ اختصاصی</th>
+              <th>مانده فعلی</th>
+              <th>آخرین تسویه</th>
+              <th>وضعیت</th>
+              <th class="no-print">عملیات</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top:1rem; font-weight:700;">
+          مجموع مبالغ اختصاصی: <span id="pettySum">۰</span> ریال
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-guarantees">
+      <div class="card no-print" id="guaranteeFormCard">
+        <h3>ثبت ضمانت جدید</h3>
+        <div class="form-row">
+          <div class="form-group"><label>نوع</label>
+            <select id="gType">
+              <option>ضمانت نامه</option>
+              <option>چک</option>
+              <option>سفته</option>
+              <option>وکالتنامه</option>
+            </select>
+          </div>
+          <div class="form-group"><label>شرکت / شخص</label><input id="gParty" placeholder="نام شرکت یا شخص"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>شماره</label><input id="gNumber" placeholder="شماره ضمانت‌نامه یا چک"></div>
+          <div class="form-group"><label>مبلغ (ریال)</label><input type="number" id="gAmount"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>تاریخ سررسید</label><input type="date" id="gDue"></div>
+          <div class="form-group"><label>وضعیت</label>
+            <select id="gStatus">
+              <option value="active">فعال</option>
+              <option value="returned">عودت داده شد</option>
+              <option value="expired">منقضی</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>توضیحات</label><input id="gNote" placeholder="مثلاً انجام تعهدات، پیش‌پرداخت و ..."></div>
+        <button class="btn" onclick="addGuarantee()">ثبت ضمانت</button>
+      </div>
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>لیست ضمانت‌ها</h3>
+        <button class="btn btn-sm no-print" onclick="importDefaultGuarantees()" style="margin-bottom:0.75rem;">وارد کردن ضمانت‌های نمونه</button>
+        <table id="guaranteeTable">
+          <thead>
+            <tr>
+              <th>نوع</th>
+              <th>شرکت / شخص</th>
+              <th>شماره</th>
+              <th>مبلغ</th>
+              <th>سررسید</th>
+              <th>وضعیت</th>
+              <th>توضیحات</th>
+              <th class="no-print">عملیات</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top:1rem; font-weight:700;">
+          مجموع مبالغ ضمانت‌های فعال: <span id="guaranteeSum">۰</span> ریال
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-forecast">
+      <div class="card no-print" id="forecastFormCard">
+        <h3>ثبت پرداخت پیش‌بینی‌شده</h3>
+        <div class="form-row">
+          <div class="form-group"><label>تأمین‌کننده / ذینفع</label><input id="fcSupplier" placeholder="نام شرکت یا شخص"></div>
+          <div class="form-group"><label>شرح هزینه</label><input id="fcDesc" placeholder="شرح"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>واحد متقاضی</label><input id="fcUnit" placeholder="مثلاً منابع انسانی، تدارکات"></div>
+          <div class="form-group"><label>مبلغ (ریال)</label><input type="number" id="fcAmount"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>تاریخ پیش‌بینی پرداخت</label><input type="date" id="fcDue"></div>
+          <div class="form-group"><label>اولویت</label>
+            <select id="fcPriority"><option>عادی</option><option>مهم</option><option>فوری</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>توضیحات</label><input id="fcNote" placeholder="توضیحات اختیاری"></div>
+        <button class="btn" onclick="addForecast()">ثبت در پیش‌بینی</button>
+      </div>
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>لیست پیش‌بینی پرداخت‌ها</h3>
+        <table id="forecastTable">
+          <thead>
+            <tr>
+              <th>تأمین‌کننده</th>
+              <th>شرح</th>
+              <th>واحد</th>
+              <th>مبلغ</th>
+              <th>تاریخ پیش‌بینی</th>
+              <th>وضعیت</th>
+              <th class="no-print">تغییر وضعیت</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top:1rem; font-weight:700;">
+          مجموع مبالغ پیش‌بینی‌شده: <span id="forecastSum">۰</span> ریال
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-reports">
+      <div class="card">
+        <h3>گزارش‌گیری</h3>
+        <button class="btn btn-sm" onclick="exportTasks()">خروجی CSV وظایف</button>
+        <button class="btn btn-sm btn-green" onclick="exportPayments()">خروجی CSV پرداخت‌ها</button>
+        <button class="btn btn-sm" onclick="exportBanks()">خروجی CSV موجودی بانک‌ها</button>
+        <div id="reportSummary" style="margin-top:1.25rem;"></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-treasury">
+      <div class="card no-print" id="payFormCard">
+        <h3>ثبت پرداخت جدید</h3>
+        <div class="form-row">
+          <div class="form-group"><label>نام ذینفع / شرکت</label><input id="payName" placeholder="نام"></div>
+          <div class="form-group"><label>شماره حساب / شبا</label><input id="payAccount" placeholder="IR..."></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>مبلغ (ریال)</label><input type="number" id="payAmount"></div>
+          <div class="form-group"><label>تاریخ</label><input type="date" id="payDate"></div>
+        </div>
+        <div class="form-group"><label>شرح</label><input id="payDesc" placeholder="بابت ..."></div>
+        <button class="btn" onclick="addPayment()">ثبت در لیست پرداخت</button>
+      </div>
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>لیست پرداخت‌ها</h3>
+        <table id="payTable">
+          <thead><tr><th>ذینفع</th><th>شماره حساب</th><th>مبلغ</th><th>تاریخ</th><th>شرح</th><th class="no-print"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section" id="sec-cover">
+      <div class="card no-print">
+        <h3>ساخت روکش درخواست پرداخت</h3>
+        <div class="form-row">
+          <div class="form-group"><label>شماره درخواست</label><input id="covNo" placeholder="۱۴۰۴/۱۲۳"></div>
+          <div class="form-group"><label>تاریخ</label><input type="date" id="covDate"></div>
+        </div>
+        <div class="form-group"><label>موضوع</label><input id="covSubject" placeholder="پرداخت بابت ..."></div>
+        <div class="form-row">
+          <div class="form-group"><label>مبلغ کل (ریال)</label><input type="number" id="covAmount"></div>
+          <div class="form-group"><label>درخواست‌کننده</label><input id="covRequester"></div>
+        </div>
+        <button class="btn" onclick="generateCover()">تولید روکش قابل چاپ</button>
+      </div>
+      <div class="print-area" id="coverPrint">
+        <h2>روکش درخواست پرداخت</h2>
+        <table>
+          <tr><th style="width:25%">شماره درخواست</th><td id="pNo"></td><th style="width:20%">تاریخ</th><td id="pDate"></td></tr>
+          <tr><th>موضوع</th><td colspan="3" id="pSubject"></td></tr>
+          <tr><th>مبلغ</th><td id="pAmount"></td><th>درخواست‌کننده</th><td id="pRequester"></td></tr>
+        </table>
+        <div style="margin-top:3rem; display:flex; justify-content:space-between;">
+          <div>امضای درخواست‌کننده:<br><br>________________</div>
+          <div>تأیید مدیر مالی:<br><br>________________</div>
+          <div>تأیید مدیرعامل:<br><br>________________</div>
+        </div>
+        <button class="btn no-print" onclick="window.print()" style="margin-top:1.5rem;">چاپ روکش</button>
+      </div>
+    </div>
+
+    <div class="section" id="sec-users">
+      <div class="card">
+        <h3>افزودن کاربر</h3>
+        <div class="form-row">
+          <div class="form-group"><label>نام کاربری</label><input id="newUser"></div>
+          <div class="form-group"><label>رمز عبور</label><input id="newPass" type="password"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>نام نمایشی</label><input id="newName"></div>
+          <div class="form-group"><label>نقش</label>
+            <select id="newRole">
+              <option value="finance">تیم مالی</option>
+              <option value="viewer">فقط مشاهده</option>
+              <option value="admin">ادمین</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn" onclick="addUser()">افزودن کاربر</button>
+      </div>
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>لیست کاربران</h3>
+        <table id="userTable">
+          <thead><tr><th>نام کاربری</th><th>نام</th><th>نقش</th><th>عملیات</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// تبدیل تاریخ میلادی به شمسی
+function toShamsi(dateStr) {
+  if (!dateStr) return '-';
+  try {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return dateStr;
+    const j = jalaali.toJalaali(y, m, d);
+    const months = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+    return `${j.jy}/${String(j.jm).padStart(2,'0')}/${String(j.jd).padStart(2,'0')} (${months[j.jm-1]})`;
+  } catch(e) {
+    return dateStr;
+  }
+}
+
+function toShamsiShort(dateStr) {
+  if (!dateStr) return '-';
+  try {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return dateStr;
+    const j = jalaali.toJalaali(y, m, d);
+    return `${j.jy}/${String(j.jm).padStart(2,'0')}/${String(j.jd).padStart(2,'0')}`;
+  } catch(e) {
+    return dateStr;
+  }
+}
+
+let dirHandle = null;
+let data = { users: [], tasks: [], payments: [], bankAccounts: [] };
+let currentUser = null;
+let chart = null;
+
+const DEFAULT_DATA = {
+  users: [
+    {username: 'admin', password: 'admin123', role: 'admin', name: 'مدیر سیستم'},
+    {username: 'finance', password: 'finance123', role: 'finance', name: 'کارشناس مالی'},
+    {username: 'viewer', password: 'viewer123', role: 'viewer', name: 'مشاهده‌گر'}
+  ],
+  tasks: [
+    {id: 1, title: 'بروزرسانی موجودی بانک‌ها', type: 'روزانه', due: '', priority: 'مهم', status: 'pending', assignee: 'کارشناس مالی', isDaily: true}
+  ],
+  payments: [],
+  bankAccounts: [
+    {id: 1, accountNumber: '637538864', name: 'حساب جاری', type: 'حساب سپرده قرض الحسنه جاری', actualBalance: 3511281268, availableBalance: 3511181268, currency: 'ریال', lastUpdate: '2026-11-24'},
+    {id: 2, accountNumber: '1079413', name: 'امام حسین اصفهان', type: 'حساب سپرده قرض الحسنه جاری', actualBalance: 27933972787, availableBalance: 27933972787, currency: 'ریال', lastUpdate: '2026-11-24'},
+    {id: 3, accountNumber: '103030329081', name: 'حساب جاری', type: 'حساب سپرده قرض الحسنه جاری', actualBalance: 2075051347, availableBalance: 2075051347, currency: 'ریال', lastUpdate: '2026-11-24'},
+    {id: 4, accountNumber: '103030329164', name: 'حساب جاری', type: 'حساب سپرده قرض الحسنه جاری', actualBalance: 20315838, availableBalance: 20315838, currency: 'ریال', lastUpdate: '2026-11-24'},
+    {id: 5, accountNumber: '103030329124', name: 'حساب جاری', type: 'حساب سپرده قرض الحسنه جاری', actualBalance: 734683138, availableBalance: 734683138, currency: 'ریال', lastUpdate: '2026-11-24'}
+  ]
+};
+
+const DEFAULT_GUARANTEES = [
+  {id: 1001, type: "ضمانت نامه", party: "اشکوه سازه فرهت", number: "6131702664100092", amount: 2792250000, due: "2027-02-15", status: "active", note: "انجام تعهدات تمدید"},
+  {id: 1002, type: "ضمانت نامه", party: "مهندسی و طراحی همپا انرژی", number: "3890101655067554", amount: 48040000001, due: "2027-02-06", status: "active", note: "انجام تعهدات"},
+  {id: 1003, type: "ضمانت نامه", party: "مهندسی و طراحی همپا انرژی", number: "3890101690714680", amount: 64379290501, due: "2027-02-06", status: "active", note: "ضمانت پیش پرداخت"},
+  {id: 1004, type: "ضمانت نامه", party: "مدیریت و اجرای سازه های شایگان", number: "1609202628443070", amount: 4260432042, due: "2026-12-10", status: "active", note: "ضمانت پیش پرداخت"},
+  {id: 1005, type: "چک", party: "مدرن سازان صنعت هونامیک مبین", number: "193117", amount: 17531458800, due: "2026-02-23", status: "active", note: "چک ضمانت پیش پرداخت"}
+];
+
+const DEFAULT_PETTY = [
+  {id: 2001, name: "علی رضایی", unit: "منابع انسانی", allocated: 50000000, balance: 32500000, lastSettle: "2026-11-15", status: "active", note: "تنخواه دفتر مرکزی"},
+  {id: 2002, name: "مریم احمدی", unit: "سایت", allocated: 80000000, balance: 12000000, lastSettle: "2026-11-10", status: "active", note: "تنخواه کارگاه"}
+];
+
+function showStatus(msg, isError = false) {
+  const el = document.getElementById('statusBar');
+  el.textContent = msg;
+  el.className = 'status-bar' + (isError ? ' error' : '');
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 5000);
+}
+
+async function selectFolder() {
+  try {
+    dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    await loadData();
+    showStatus('پوشه داده با موفقیت انتخاب شد');
+  } catch (e) {
+    if (e.name !== 'AbortError') showStatus('خطا در انتخاب پوشه: ' + e.message, true);
+  }
+}
+
+async function loadData() {
+  if (!dirHandle) {
+    data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    refreshAll();
+    return;
+  }
+  try {
+    const fileHandle = await dirHandle.getFileHandle('finance-data.json', { create: true });
+    const file = await fileHandle.getFile();
+    const text = await file.text();
+    if (text.trim()) {
+      data = JSON.parse(text);
+      if (!data.bankAccounts) data.bankAccounts = DEFAULT_DATA.bankAccounts;
+      // همیشه ضمانت‌ها را اگر کم باشند اضافه کن
+      if (!data.guarantees || data.guarantees.length < 5) {
+        data.guarantees = DEFAULT_GUARANTEES;
+        await saveData();
+      }
+      if (!data.pettyCash || data.pettyCash.length === 0) {
+        data.pettyCash = DEFAULT_PETTY;
+        await saveData();
+      }
+    } else {
+      data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      await saveData();
+    }
+  } catch (e) {
+    data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    showStatus('فایل داده ایجاد شد');
+  }
+  refreshAll();
+}
+
+async function saveData() {
+  if (!dirHandle) return;
+  try {
+    const fileHandle = await dirHandle.getFileHandle('finance-data.json', { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify(data, null, 2));
+    await writable.close();
+  } catch (e) {
+    showStatus('خطا در ذخیره: ' + e.message, true);
+  }
+}
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const user = data.users.find(x => x.username === u && x.password === p);
+  if (!user) { alert('نام کاربری یا رمز اشتباه است'); return; }
+  currentUser = user;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('userBadge').textContent = `${user.name || user.username} (${roleLabel(user.role)})`;
+  document.getElementById('navUsers').style.display = user.role === 'admin' ? 'block' : 'none';
+  applyPermissions();
+  refreshAll();
+}
+
+function roleLabel(r) {
+  return r === 'admin' ? 'ادمین' : r === 'finance' ? 'تیم مالی' : 'مشاهده‌گر';
+}
+
+function applyPermissions() {
+  const canEdit = currentUser.role === 'admin' || currentUser.role === 'finance';
+  document.getElementById('taskFormCard').style.display = canEdit ? 'block' : 'none';
+  document.getElementById('payFormCard').style.display = canEdit ? 'block' : 'none';
+  document.getElementById('forecastFormCard').style.display = canEdit ? 'block' : 'none';
+  document.getElementById('guaranteeFormCard').style.display = canEdit ? 'block' : 'none';
+  document.getElementById('pettyFormCard').style.display = canEdit ? 'block' : 'none';
+  document.getElementById('bankUploadCard').style.display = canEdit ? 'block' : 'none';
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  document.querySelector(`.nav-item[data-section="${name}"]`).classList.add('active');
+  const titles = { dashboard:'داشبورد کلی', tasks:'وظایف و سررسیدها', banks:'موجودی بانک‌ها', petty:'تنخواه‌داران', guarantees:'ضمانت‌ها', forecast:'پیش‌بینی پرداخت', reports:'گزارش‌ها', treasury:'خزانه و پرداخت‌ها', cover:'روکش درخواست پرداخت', users:'مدیریت کاربران' };
+  document.getElementById('pageTitle').textContent = titles[name] || name;
+}
+
+function refreshAll() {
+  renderTasks();
+  renderPayments();
+  renderBanks();
+  renderForecast();
+  renderGuarantees();
+  renderPetty();
+  renderUsers();
+  updateKPIs();
+  updateReport();
+}
+
+function updateKPIs() {
+  const open = data.tasks.filter(t => t.status === 'pending').length;
+  const soon = data.tasks.filter(t => {
+    if (t.status !== 'pending' || !t.due || t.isDaily) return false;
+    const d = new Date(t.due);
+    const now = new Date();
+    const diff = (d - now) / (1000*60*60*24);
+    return diff >= 0 && diff <= 7;
+  }).length;
+  document.getElementById('kpiOpen').textContent = open;
+  document.getElementById('kpiSoon').textContent = soon;
+  document.getElementById('kpiPayments').textContent = data.payments.length;
+  const bankTotal = (data.bankAccounts || []).reduce((s, a) => s + (a.actualBalance || 0), 0);
+  document.getElementById('kpiBankTotal').textContent = bankTotal.toLocaleString('fa-IR');
+}
+
+function updateReport() {
+  const open = data.tasks.filter(t => t.status === 'pending').length;
+  const overdue = data.tasks.filter(t => t.status === 'pending' && t.due && !t.isDaily && new Date(t.due) < new Date()).length;
+  const bankTotal = (data.bankAccounts || []).reduce((s, a) => s + (a.actualBalance || 0), 0);
+  document.getElementById('reportSummary').innerHTML = `
+    <p><strong>خلاصه:</strong> ${data.tasks.length} وظیفه کل • ${open} باز • ${overdue} سررسید گذشته • ${data.payments.length} پرداخت • موجودی بانک‌ها: ${bankTotal.toLocaleString('fa-IR')} ریال</p>
+  `;
+}
+
+async function addTask() {
+  const title = document.getElementById('taskTitle').value.trim();
+  if (!title) return alert('عنوان را وارد کنید');
+  const isDaily = document.getElementById('taskIsDaily').checked || document.getElementById('taskType').value === 'روزانه';
+  data.tasks.push({
+    id: Date.now(),
+    title,
+    type: document.getElementById('taskType').value,
+    due: isDaily ? '' : document.getElementById('taskDue').value,
+    priority: document.getElementById('taskPriority').value,
+    assignee: document.getElementById('taskAssignee').value || currentUser.name,
+    status: 'pending',
+    isDaily
+  });
+  await saveData();
+  refreshAll();
+  document.getElementById('taskTitle').value = '';
+  document.getElementById('taskIsDaily').checked = false;
+  showStatus('وظیفه ثبت شد');
+}
+
+function renderTasks() {
+  const tbody = document.querySelector('#taskTable tbody');
+  tbody.innerHTML = '';
+  data.tasks.forEach(t => {
+    const isOverdue = !t.isDaily && t.status === 'pending' && t.due && new Date(t.due) < new Date();
+    const badgeClass = isOverdue ? 'overdue' : (t.isDaily ? 'daily' : t.status);
+    let statusText = isOverdue ? 'سررسید گذشته' : (t.status === 'done' ? 'انجام‌شده' : 'در انتظار');
+    if (t.isDaily) statusText = t.status === 'done' ? 'انجام شد امروز' : 'روزانه - در انتظار';
+    const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.role === 'finance');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${t.title} ${t.isDaily ? '<span class="badge daily">روزانه</span>' : ''}</td>
+      <td>${t.type}</td>
+      <td>${t.isDaily ? 'هر روز' : toShamsi(t.due)}</td>
+      <td>${t.assignee || '-'}</td>
+      <td><span class="badge ${badgeClass}">${statusText}</span></td>
+      <td class="no-print">
+        ${t.attachment ? `<button class="btn btn-sm btn-green" onclick="viewAttachment('${t.attachment}')">مشاهده</button>` : ''}
+        ${canEdit ? `<button class="btn btn-sm" onclick="uploadAttachment(${t.id})">آپلود مدرک</button>` : ''}
+      </td>
+      <td class="no-print">
+        ${canEdit ? `<button class="btn btn-sm" onclick="toggleTask(${t.id})">${t.status==='done'?'بازگشت':'انجام شد'}</button>` : ''}
+        ${currentUser && currentUser.role === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deleteTask(${t.id})">حذف</button>` : ''}
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function toggleTask(id) {
+  const t = data.tasks.find(x => x.id === id);
+  if (t) t.status = t.status === 'done' ? 'pending' : 'done';
+  await saveData();
+  refreshAll();
+}
+
+async function deleteTask(id) {
+  if (!confirm('حذف شود؟')) return;
+  data.tasks = data.tasks.filter(t => t.id !== id);
+  await saveData();
+  refreshAll();
+}
+
+async function uploadAttachment(taskId) {
+  if (!dirHandle) {
+    alert('ابتدا پوشه داده را انتخاب کنید');
+    return;
+  }
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*,.pdf,.jpg,.jpeg,.png';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    try {
+      const fileHandle = await dirHandle.getFileHandle(`task-${taskId}-${file.name}`, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(file);
+      await writable.close();
+      const task = data.tasks.find(t => t.id === taskId);
+      if (task) {
+        task.attachment = `task-${taskId}-${file.name}`;
+        await saveData();
+        renderTasks();
+        showStatus('مدرک با موفقیت آپلود شد');
+      }
+    } catch (e) {
+      showStatus('خطا در آپلود: ' + e.message, true);
+    }
+  };
+  input.click();
+}
+
+async function viewAttachment(filename) {
+  if (!dirHandle) {
+    alert('ابتدا پوشه داده را انتخاب کنید');
+    return;
+  }
+  try {
+    const fileHandle = await dirHandle.getFileHandle(filename);
+    const file = await fileHandle.getFile();
+    const url = URL.createObjectURL(file);
+    window.open(url, '_blank');
+  } catch (e) {
+    showStatus('فایل پیدا نشد: ' + e.message, true);
+  }
+}
+
+function renderBanks() {
+  const tbody = document.querySelector('#bankTable tbody');
+  tbody.innerHTML = '';
+  const accounts = data.bankAccounts || [];
+  accounts.forEach(a => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${a.accountNumber}</td>
+      <td>${a.name || a.type}</td>
+      <td>${(a.actualBalance || 0).toLocaleString('fa-IR')}</td>
+      <td>${(a.availableBalance || 0).toLocaleString('fa-IR')}</td>
+      <td>${toShamsiShort(a.lastUpdate)}</td>`;
+    tbody.appendChild(tr);
+  });
+  const total = accounts.reduce((s, a) => s + (a.actualBalance || 0), 0);
+  document.getElementById('bankSum').textContent = total.toLocaleString('fa-IR');
+}
+
+async function handlePdfUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  showStatus('در حال پردازش PDF...');
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      fullText += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    parseBankPdf(fullText);
+  } catch (e) {
+    showStatus('خطا در خواندن PDF: ' + e.message, true);
+  }
+  input.value = '';
+}
+
+function parseBankPdf(text) {
+  // تبدیل اعداد فارسی به انگلیسی
+  const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+  const englishDigits = '0123456789';
+  let normalized = text;
+  for (let i = 0; i < 10; i++) {
+    normalized = normalized.replace(new RegExp(persianDigits[i], 'g'), englishDigits[i]);
+  }
+  normalized = normalized.replace(/,/g, '');
+
+  // استخراج اعداد بزرگ (مانده‌ها)
+  const numbers = normalized.match(/\d{6,}/g) || [];
+  const balances = numbers.map(n => parseInt(n)).filter(n => n > 1000000);
+
+  document.getElementById('parseResult').innerHTML = `
+    <div style="background:#ecfdf5; padding:1rem; border-radius:8px; margin-top:1rem;">
+      <strong>متن استخراج‌شده (نمونه):</strong><br>
+      <small style="color:#065f46;">${text.substring(0, 500)}...</small><br><br>
+      <strong>اعداد شناسایی‌شده:</strong> ${balances.slice(0, 10).map(b => b.toLocaleString('fa-IR')).join(' ، ')}
+    </div>
+  `;
+
+  // به‌روزرسانی ساده بر اساس ترتیب حساب‌ها (برای نسخه فعلی)
+  if (data.bankAccounts && balances.length >= data.bankAccounts.length) {
+    const today = new Date().toISOString().split('T')[0];
+    data.bankAccounts.forEach((acc, idx) => {
+      if (balances[idx]) {
+        acc.actualBalance = balances[idx];
+        acc.availableBalance = balances[idx];
+        acc.lastUpdate = today;
+      }
+    });
+    saveData().then(() => {
+      renderBanks();
+      updateKPIs();
+      showStatus('موجودی‌ها با موفقیت از PDF به‌روز شد');
+    });
+  } else {
+    showStatus('ساختار PDF شناسایی شد اما تطبیق کامل نشد. موجودی‌ها را دستی بررسی کنید.', true);
+  }
+}
+
+async function addPayment() {
+  const name = document.getElementById('payName').value.trim();
+  const amount = document.getElementById('payAmount').value;
+  if (!name || !amount) return alert('نام و مبلغ الزامی است');
+  data.payments.push({
+    id: Date.now(),
+    name,
+    account: document.getElementById('payAccount').value,
+    amount: Number(amount),
+    date: document.getElementById('payDate').value,
+    desc: document.getElementById('payDesc').value
+  });
+  await saveData();
+  refreshAll();
+  document.getElementById('payName').value = '';
+  document.getElementById('payAmount').value = '';
+  document.getElementById('payAccount').value = '';
+  document.getElementById('payDesc').value = '';
+  showStatus('پرداخت ثبت شد');
+}
+
+function renderPayments() {
+  const tbody = document.querySelector('#payTable tbody');
+  tbody.innerHTML = '';
+  data.payments.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.name}</td>
+      <td>${p.account || '-'}</td>
+      <td>${Number(p.amount).toLocaleString('fa-IR')}</td>
+      <td>${toShamsi(p.date)}</td>
+      <td>${p.desc || '-'}</td>
+      <td class="no-print">${currentUser && currentUser.role === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deletePayment(${p.id})">حذف</button>` : ''}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function deletePayment(id) {
+  if (!confirm('حذف شود؟')) return;
+  data.payments = data.payments.filter(p => p.id !== id);
+  await saveData();
+  refreshAll();
+}
+
+function generateCover() {
+  document.getElementById('pNo').textContent = document.getElementById('covNo').value || '-';
+  document.getElementById('pDate').textContent = toShamsi(document.getElementById('covDate').value) || '-';
+  document.getElementById('pSubject').textContent = document.getElementById('covSubject').value || '-';
+  document.getElementById('pAmount').textContent = Number(document.getElementById('covAmount').value || 0).toLocaleString('fa-IR') + ' ریال';
+  document.getElementById('pRequester').textContent = document.getElementById('covRequester').value || '-';
+  document.getElementById('coverPrint').style.display = 'block';
+}
+
+async function addUser() {
+  if (currentUser.role !== 'admin') return;
+  const username = document.getElementById('newUser').value.trim();
+  const password = document.getElementById('newPass').value;
+  const name = document.getElementById('newName').value.trim();
+  const role = document.getElementById('newRole').value;
+  if (!username || !password) return alert('نام کاربری و رمز الزامی است');
+  if (data.users.find(u => u.username === username)) return alert('این نام کاربری وجود دارد');
+  data.users.push({ username, password, role, name: name || username });
+  await saveData();
+  renderUsers();
+  document.getElementById('newUser').value = '';
+  document.getElementById('newPass').value = '';
+  document.getElementById('newName').value = '';
+}
+
+function renderUsers() {
+  const tbody = document.querySelector('#userTable tbody');
+  tbody.innerHTML = '';
+  data.users.forEach(u => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${u.username}</td>
+      <td>${u.name || '-'}</td>
+      <td>${roleLabel(u.role)}</td>
+      <td>${currentUser && currentUser.role === 'admin' && u.username !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deleteUser('${u.username}')">حذف</button>` : '-'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function deleteUser(username) {
+  if (!confirm('حذف کاربر؟')) return;
+  data.users = data.users.filter(u => u.username !== username);
+  await saveData();
+  renderUsers();
+}
+
+function exportTasks() {
+  let csv = 'عنوان,نوع,سررسید,مسئول,وضعیت,روزانه\n';
+  data.tasks.forEach(t => csv += `"${t.title}","${t.type}","${t.due}","${t.assignee||''}","${t.status}","${t.isDaily}"\n`);
+  downloadCSV(csv, 'tasks.csv');
+}
+
+function exportPayments() {
+  let csv = 'ذینفع,شماره حساب,مبلغ,تاریخ,شرح\n';
+  data.payments.forEach(p => csv += `"${p.name}","${p.account}","${p.amount}","${p.date}","${p.desc}"\n`);
+  downloadCSV(csv, 'payments.csv');
+}
+
+function exportBanks() {
+  let csv = 'شماره حساب,نام,مانده واقعی,مانده قابل برداشت,آخرین بروزرسانی\n';
+  (data.bankAccounts || []).forEach(a => csv += `"${a.accountNumber}","${a.name}","${a.actualBalance}","${a.availableBalance}","${a.lastUpdate}"\n`);
+  downloadCSV(csv, 'bank-balances.csv');
+}
+
+function downloadCSV(content, filename) {
+  const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+async function addForecast() {
+  const supplier = document.getElementById('fcSupplier').value.trim();
+  const amount = document.getElementById('fcAmount').value;
+  if (!supplier || !amount) return alert('تأمین‌کننده و مبلغ الزامی است');
+  if (!data.forecast) data.forecast = [];
+  data.forecast.push({
+    id: Date.now(),
+    supplier,
+    desc: document.getElementById('fcDesc').value,
+    unit: document.getElementById('fcUnit').value,
+    amount: Number(amount),
+    due: document.getElementById('fcDue').value,
+    priority: document.getElementById('fcPriority').value,
+    note: document.getElementById('fcNote').value,
+    status: 'forecast'
+  });
+  await saveData();
+  refreshAll();
+  document.getElementById('fcSupplier').value = '';
+  document.getElementById('fcAmount').value = '';
+  document.getElementById('fcDesc').value = '';
+  showStatus('به پیش‌بینی اضافه شد');
+}
+
+function renderForecast() {
+  const tbody = document.querySelector('#forecastTable tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const items = data.forecast || [];
+  const statusLabels = {
+    forecast: 'پیش‌بینی',
+    check: 'چک صادر شد',
+    paid: 'پرداخت شد',
+    document: 'سند حسابداری زده شد'
+  };
+  const statusClass = {
+    forecast: 'pending',
+    check: 'daily',
+    paid: 'done',
+    document: 'done'
+  };
+  items.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.supplier}</td>
+      <td>${item.desc || '-'}</td>
+      <td>${item.unit || '-'}</td>
+      <td>${Number(item.amount).toLocaleString('fa-IR')}</td>
+      <td>${toShamsi(item.due)}</td>
+      <td><span class="badge ${statusClass[item.status] || 'pending'}">${statusLabels[item.status] || item.status}</span></td>
+      <td class="no-print">
+        <select onchange="changeForecastStatus(${item.id}, this.value)" style="padding:0.3rem; border-radius:6px;">
+          <option value="forecast" ${item.status==='forecast'?'selected':''}>پیش‌بینی</option>
+          <option value="check" ${item.status==='check'?'selected':''}>چک صادر شد</option>
+          <option value="paid" ${item.status==='paid'?'selected':''}>پرداخت شد</option>
+          <option value="document" ${item.status==='document'?'selected':''}>سند حسابداری</option>
+        </select>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  const total = items.reduce((s, i) => s + (i.amount || 0), 0);
+  const sumEl = document.getElementById('forecastSum');
+  if (sumEl) sumEl.textContent = total.toLocaleString('fa-IR');
+}
+
+async function changeForecastStatus(id, newStatus) {
+  const item = (data.forecast || []).find(x => x.id === id);
+  if (item) {
+    item.status = newStatus;
+    await saveData();
+    renderForecast();
+    showStatus('وضعیت به‌روز شد');
+  }
+}
+
+async function addGuarantee() {
+  const party = document.getElementById('gParty').value.trim();
+  const amount = document.getElementById('gAmount').value;
+  if (!party || !amount) return alert('شرکت/شخص و مبلغ الزامی است');
+  if (!data.guarantees) data.guarantees = [];
+  data.guarantees.push({
+    id: Date.now(),
+    type: document.getElementById('gType').value,
+    party,
+    number: document.getElementById('gNumber').value,
+    amount: Number(amount),
+    due: document.getElementById('gDue').value,
+    status: document.getElementById('gStatus').value,
+    note: document.getElementById('gNote').value
+  });
+  await saveData();
+  refreshAll();
+  document.getElementById('gParty').value = '';
+  document.getElementById('gAmount').value = '';
+  document.getElementById('gNumber').value = '';
+  document.getElementById('gNote').value = '';
+  showStatus('ضمانت ثبت شد');
+}
+
+async function importDefaultGuarantees() {
+  if (!confirm('ضمانت‌های نمونه جایگزین شوند؟')) return;
+  data.guarantees = JSON.parse(JSON.stringify(DEFAULT_GUARANTEES));
+  await saveData();
+  renderGuarantees();
+  showStatus('ضمانت‌های نمونه وارد شد');
+}
+
+function renderGuarantees() {
+  const tbody = document.querySelector('#guaranteeTable tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const items = data.guarantees || [];
+  const statusLabels = { active: 'فعال', returned: 'عودت داده شد', expired: 'منقضی' };
+  const statusClass = { active: 'pending', returned: 'done', expired: 'overdue' };
+  items.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.type}</td>
+      <td>${item.party}</td>
+      <td>${item.number || '-'}</td>
+      <td>${Number(item.amount).toLocaleString('fa-IR')}</td>
+      <td>${toShamsi(item.due)}</td>
+      <td><span class="badge ${statusClass[item.status] || 'pending'}">${statusLabels[item.status] || item.status}</span></td>
+      <td>${item.note || '-'}</td>
+      <td class="no-print">
+        <select onchange="changeGuaranteeStatus(${item.id}, this.value)" style="padding:0.3rem; border-radius:6px;">
+          <option value="active" ${item.status==='active'?'selected':''}>فعال</option>
+          <option value="returned" ${item.status==='returned'?'selected':''}>عودت داده شد</option>
+          <option value="expired" ${item.status==='expired'?'selected':''}>منقضی</option>
+        </select>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  const total = items.filter(i => i.status === 'active').reduce((s, i) => s + (i.amount || 0), 0);
+  const sumEl = document.getElementById('guaranteeSum');
+  if (sumEl) sumEl.textContent = total.toLocaleString('fa-IR');
+}
+
+async function changeGuaranteeStatus(id, newStatus) {
+  const item = (data.guarantees || []).find(x => x.id === id);
+  if (item) {
+    item.status = newStatus;
+    await saveData();
+    renderGuarantees();
+    showStatus('وضعیت ضمانت به‌روز شد');
+  }
+}
+
+async function addPetty() {
+  const name = document.getElementById('ptName').value.trim();
+  const allocated = document.getElementById('ptAllocated').value;
+  if (!name || !allocated) return alert('نام و مبلغ اختصاصی الزامی است');
+  if (!data.pettyCash) data.pettyCash = [];
+  data.pettyCash.push({
+    id: Date.now(),
+    name,
+    unit: document.getElementById('ptUnit').value,
+    allocated: Number(allocated),
+    balance: Number(document.getElementById('ptBalance').value) || Number(allocated),
+    lastSettle: document.getElementById('ptLastSettle').value,
+    status: document.getElementById('ptStatus').value,
+    note: document.getElementById('ptNote').value
+  });
+  await saveData();
+  refreshAll();
+  document.getElementById('ptName').value = '';
+  document.getElementById('ptAllocated').value = '';
+  document.getElementById('ptBalance').value = '';
+  showStatus('تنخواه‌دار ثبت شد');
+}
+
+function renderPetty() {
+  const tbody = document.querySelector('#pettyTable tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const items = data.pettyCash || [];
+  const statusLabels = { active: 'فعال', settled: 'تسویه شده', suspended: 'معلق' };
+  const statusClass = { active: 'pending', settled: 'done', suspended: 'overdue' };
+  items.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.name}</td>
+      <td>${item.unit || '-'}</td>
+      <td>${Number(item.allocated).toLocaleString('fa-IR')}</td>
+      <td>${Number(item.balance || 0).toLocaleString('fa-IR')}</td>
+      <td>${toShamsi(item.lastSettle)}</td>
+      <td><span class="badge ${statusClass[item.status] || 'pending'}">${statusLabels[item.status] || item.status}</span></td>
+      <td class="no-print">
+        <select onchange="changePettyStatus(${item.id}, this.value)" style="padding:0.3rem; border-radius:6px;">
+          <option value="active" ${item.status==='active'?'selected':''}>فعال</option>
+          <option value="settled" ${item.status==='settled'?'selected':''}>تسویه شده</option>
+          <option value="suspended" ${item.status==='suspended'?'selected':''}>معلق</option>
+        </select>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  const total = items.reduce((s, i) => s + (i.allocated || 0), 0);
+  const sumEl = document.getElementById('pettySum');
+  if (sumEl) sumEl.textContent = total.toLocaleString('fa-IR');
+}
+
+async function changePettyStatus(id, newStatus) {
+  const item = (data.pettyCash || []).find(x => x.id === id);
+  if (item) {
+    item.status = newStatus;
+    await saveData();
+    renderPetty();
+    showStatus('وضعیت تنخواه به‌روز شد');
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
