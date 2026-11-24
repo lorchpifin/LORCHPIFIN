@@ -1,0 +1,331 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "name": "مدیر سیستم"
+    },
+    {
+      "username": "finance",
+      "password": "finance123",
+      "role": "finance",
+      "name": "کارشناس مالی"
+    },
+    {
+      "username": "viewer",
+      "password": "viewer123",
+      "role": "viewer",
+      "name": "مشاهده‌گر"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "title": "بروزرسانی موجودی بانک‌ها",
+      "type": "روزانه",
+      "due": "",
+      "priority": "مهم",
+      "status": "pending",
+      "assignee": "کارشناس مالی",
+      "isDaily": true
+    },
+    {
+      "id": 2,
+      "title": "ارسال اظهارنامه ارزش افزوده فصل سوم ۱۴۰۴",
+      "type": "اظهارنامه",
+      "due": "2026-12-15",
+      "priority": "مهم",
+      "status": "pending",
+      "assignee": "کارشناس مالی",
+      "isDaily": false
+    }
+  ],
+  "payments": [],
+  "bankAccounts": [
+    {
+      "id": 1,
+      "accountNumber": "637538864",
+      "name": "حساب جاری",
+      "type": "حساب سپرده قرض الحسنه جاری",
+      "actualBalance": 3511281268,
+      "availableBalance": 3511181268,
+      "currency": "ریال",
+      "lastUpdate": "2026-11-24"
+    },
+    {
+      "id": 2,
+      "accountNumber": "1079413",
+      "name": "امام حسین اصفهان",
+      "type": "حساب سپرده قرض الحسنه جاری",
+      "actualBalance": 27933972787,
+      "availableBalance": 27933972787,
+      "currency": "ریال",
+      "lastUpdate": "2026-11-24"
+    },
+    {
+      "id": 3,
+      "accountNumber": "103030329081",
+      "name": "حساب جاری",
+      "type": "حساب سپرده قرض الحسنه جاری",
+      "actualBalance": 2075051347,
+      "availableBalance": 2075051347,
+      "currency": "ریال",
+      "lastUpdate": "2026-11-24"
+    },
+    {
+      "id": 4,
+      "accountNumber": "103030329164",
+      "name": "حساب جاری",
+      "type": "حساب سپرده قرض الحسنه جاری",
+      "actualBalance": 20315838,
+      "availableBalance": 20315838,
+      "currency": "ریال",
+      "lastUpdate": "2026-11-24"
+    },
+    {
+      "id": 5,
+      "accountNumber": "103030329124",
+      "name": "حساب جاری",
+      "type": "حساب سپرده قرض الحسنه جاری",
+      "actualBalance": 734683138,
+      "availableBalance": 734683138,
+      "currency": "ریال",
+      "lastUpdate": "2026-11-24"
+    }
+  ],
+  "guarantees": [
+    {
+      "id": 1001,
+      "type": "ضمانت نامه",
+      "party": "اشکوه سازه فرهت",
+      "number": "6131702664100092",
+      "amount": 2792250000,
+      "due": "2027-02-15",
+      "status": "active",
+      "note": "انجام تعهدات تمدید"
+    },
+    {
+      "id": 1002,
+      "type": "ضمانت نامه",
+      "party": "مهندسی و طراحی همپا انرژی",
+      "number": "3890101655067554",
+      "amount": 48040000001,
+      "due": "2027-02-06",
+      "status": "active",
+      "note": "انجام تعهدات"
+    },
+    {
+      "id": 1003,
+      "type": "ضمانت نامه",
+      "party": "مهندسی و طراحی همپا انرژی",
+      "number": "3890101690714680",
+      "amount": 64379290501,
+      "due": "2027-02-06",
+      "status": "active",
+      "note": "ضمانت پیش پرداخت"
+    },
+    {
+      "id": 1004,
+      "type": "ضمانت نامه",
+      "party": "مدیریت و اجرای سازه های شایگان",
+      "number": "1609202628443070",
+      "amount": 4260432042,
+      "due": "2026-12-10",
+      "status": "active",
+      "note": "ضمانت پیش پرداخت"
+    },
+    {
+      "id": 1005,
+      "type": "چک",
+      "party": "مدرن سازان صنعت هونامیک مبین",
+      "number": "193117",
+      "amount": 17531458800,
+      "due": "2026-02-23",
+      "status": "active",
+      "note": "چک ضمانت پیش پرداخت"
+    },
+    {
+      "id": 1006,
+      "type": "ضمانت نامه",
+      "party": "مهندسان مشاور تهران رایمند",
+      "number": "0003601623977238",
+      "amount": 20500000000,
+      "due": "2026-08-31",
+      "status": "returned",
+      "note": "عودت داده شد 1404/06/10"
+    },
+    {
+      "id": 1007,
+      "type": "ضمانت نامه",
+      "party": "مهندسان مشاور تهران رایمند",
+      "number": "0003601628079693",
+      "amount": 28101211875,
+      "due": "2026-08-31",
+      "status": "returned",
+      "note": "عودت داده شد 1404/06/10"
+    },
+    {
+      "id": 1008,
+      "type": "چک",
+      "party": "کیان تنها پولاد",
+      "number": "472942",
+      "amount": 42850962000,
+      "due": "2026-02-23",
+      "status": "returned",
+      "note": "عودت داده شد 1404/02/05"
+    },
+    {
+      "id": 1009,
+      "type": "ضمانت نامه",
+      "party": "کیان سازه بنوار",
+      "number": "2627002605834857",
+      "amount": 33666952974,
+      "due": "2025-12-21",
+      "status": "returned",
+      "note": "عودت داده شد 1404/05/28"
+    },
+    {
+      "id": 1010,
+      "type": "سفته",
+      "party": "سعید محمدحسینی",
+      "number": "43863",
+      "amount": 1500000000,
+      "due": "",
+      "status": "active",
+      "note": ""
+    },
+    {
+      "id": 1011,
+      "type": "چک",
+      "party": "ماهاب سازه",
+      "number": "867540",
+      "amount": 10430795000,
+      "due": "",
+      "status": "active",
+      "note": ""
+    },
+    {
+      "id": 1012,
+      "type": "چک",
+      "party": "ماهاب سازه",
+      "number": "446500",
+      "amount": 115000000,
+      "due": "",
+      "status": "active",
+      "note": "انجام تعهدات قرارداد ساخت آبراهه"
+    },
+    {
+      "id": 1013,
+      "type": "چک",
+      "party": "ماهاب سازه",
+      "number": "446456",
+      "amount": 1000000000,
+      "due": "",
+      "status": "active",
+      "note": "پیش پرداخت"
+    },
+    {
+      "id": 1014,
+      "type": "سفته",
+      "party": "امیر پایداری",
+      "number": "573763",
+      "amount": 200000000,
+      "due": "",
+      "status": "active",
+      "note": ""
+    },
+    {
+      "id": 1015,
+      "type": "چک",
+      "party": "عبدالرضا مهدی پور",
+      "number": "68519",
+      "amount": 6000000000,
+      "due": "",
+      "status": "active",
+      "note": "پیش پرداخت ق 93"
+    },
+    {
+      "id": 1016,
+      "type": "ضمانت نامه",
+      "party": "دانشگاه صنعتی امیرکبیر",
+      "number": "3840",
+      "amount": 204171428,
+      "due": "",
+      "status": "active",
+      "note": "حسن انجام کار"
+    },
+    {
+      "id": 1017,
+      "type": "ضمانت نامه",
+      "party": "شرکت پژوهش و فناوری پتروشیمی",
+      "number": "12654",
+      "amount": 1212500000,
+      "due": "",
+      "status": "active",
+      "note": "ضمانت پیش پرداخت"
+    },
+    {
+      "id": 1018,
+      "type": "چک",
+      "party": "راه دشت پی",
+      "number": "585202",
+      "amount": 3000000000,
+      "due": "2024-11-17",
+      "status": "active",
+      "note": "انجام تعهدات"
+    },
+    {
+      "id": 1019,
+      "type": "چک",
+      "party": "کاسپین استیل ویستا",
+      "number": "854827",
+      "amount": 40087092000,
+      "due": "2024-04-28",
+      "status": "active",
+      "note": ""
+    },
+    {
+      "id": 1020,
+      "type": "چک",
+      "party": "جهان کار اصفهان",
+      "number": "138017",
+      "amount": 23889975000,
+      "due": "",
+      "status": "active",
+      "note": ""
+    }
+  ],
+  "pettyCash": [
+    {
+      "id": 2001,
+      "name": "علی رضایی",
+      "unit": "منابع انسانی",
+      "allocated": 50000000,
+      "balance": 32500000,
+      "lastSettle": "2026-11-15",
+      "status": "active",
+      "note": "تنخواه دفتر مرکزی"
+    },
+    {
+      "id": 2002,
+      "name": "مریم احمدی",
+      "unit": "سایت",
+      "allocated": 80000000,
+      "balance": 12000000,
+      "lastSettle": "2026-11-10",
+      "status": "active",
+      "note": "تنخواه کارگاه"
+    },
+    {
+      "id": 2003,
+      "name": "حسین کریمی",
+      "unit": "تدارکات",
+      "allocated": 30000000,
+      "balance": 30000000,
+      "lastSettle": "2026-10-28",
+      "status": "active",
+      "note": ""
+    }
+  ]
+}
